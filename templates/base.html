@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="{{ config.get('tema', 'escuro') }}">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="color-scheme" content="dark light">
+  <title>{% block titulo %}{{ app_nome }}{% endblock %}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}?v=13">
+  <script src="{{ url_for('static', filename='app.js') }}?v=10" defer></script>
+</head>
+{% set add_sheet_open = request.endpoint == 'dashboard' and request.args.get('painel') == 'adicionar' %}
+<body data-add-sheet="{{ 'true' if add_sheet_open else 'false' }}">
+  <a class="pular-link" href="#conteudo" {% if add_sheet_open %}inert aria-hidden="true"{% endif %}>Pular para o conteúdo</a>
+
+  <div class="app">
+    <header class="topo" {% if add_sheet_open %}inert aria-hidden="true"{% endif %}>
+      <a class="marca" href="{{ url_for('dashboard') }}">
+        <span class="marca-texto">Resumo<br>Financeiro</span>
+      </a>
+      <p class="topo-data">{{ data_hora }}</p>
+    </header>
+
+    {% with mensagens = get_flashed_messages(with_categories=true) %}
+      {% if mensagens %}
+        <div class="avisos" role="status" aria-live="polite">
+          {% for categoria, mensagem in mensagens %}
+            <p class="aviso aviso-{{ categoria }}">{{ mensagem }}</p>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    <main id="conteudo" class="conteudo" data-screen="{{ tela }}"
+          {% if add_sheet_open %}inert aria-hidden="true"{% endif %}>
+      {% block conteudo %}{% endblock %}
+    </main>
+
+    <nav class="barra-inferior" aria-label="Navegação principal"
+         {% if add_sheet_open %}inert aria-hidden="true"{% endif %}>
+      <a href="{{ url_for('dashboard') }}" {% if tela == 'resumo' %}aria-current="page"{% endif %}>
+        <span class="nav-icone" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12 12 4l9 8"/><path d="M5 10v10h14V10"/></svg>
+        </span>
+        <span>Resumo</span>
+      </a>
+      <a class="nav-adicionar" href="{{ url_for('dashboard', painel='adicionar') }}"
+         {% if tela == 'adicionar' or add_sheet_open %}aria-current="page"{% endif %}>
+        <span class="nav-icone" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="10" rx="2"/><path d="M12 9v6M9 12h6"/></svg>
+        </span>
+        <span>Adicionar</span>
+      </a>
+      <a href="{{ url_for('perfil') }}" {% if tela == 'perfil' %}aria-current="page"{% endif %}>
+        <span class="nav-icone" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-5 3.5-8 8-8s8 3 8 8"/></svg>
+        </span>
+        <span>Perfil</span>
+      </a>
+      <a href="{{ url_for('configuracoes') }}" {% if tela == 'configuracoes' %}aria-current="page"{% endif %}>
+        <span class="nav-icone" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/></svg>
+        </span>
+        <span>Configurações</span>
+      </a>
+    </nav>
+  </div>
+  {% if add_sheet_open %}
+    {% include "_add_sheet.html" %}
+  {% endif %}
+</body>
+</html>

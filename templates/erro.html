@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block titulo %}Erro {{ codigo }} · {{ app_nome }}{% endblock %}
+
+{% block conteudo %}
+<section class="cartao erro-pagina">
+  <p class="rotulo">Erro {{ codigo }}</p>
+  <h1 class="titulo-pagina">Algo não saiu <span class="destaque">como esperado.</span></h1>
+  <p class="cartao-nota">{{ mensagem }}</p>
+  <a class="botao" href="{{ url_for('dashboard') }}">Voltar ao resumo</a>
+</section>
+{% endblock %}

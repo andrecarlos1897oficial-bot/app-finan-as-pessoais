@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block titulo %}Adicionar · {{ app_nome }}{% endblock %}
+
+{% block conteudo %}
+<section class="secao">
+  <p class="rotulo">Novo lançamento</p>
+  <h1 class="titulo-pagina">O que você quer <span class="destaque">registrar?</span></h1>
+  <p class="subtitulo">Escolha o tipo de movimentação para continuar.</p>
+</section>
+
+<section aria-label="Tipos de lançamento">
+  {% include "_action_grid.html" %}
+</section>
+
+<section class="cartao resumo-rapido">
+  <h2 class="cartao-titulo">Precisa de uma visão geral?</h2>
+  <p class="cartao-nota">Todos os valores lançados aparecem no resumo com os percentuais recalculados pelo servidor.</p>
+  <a class="botao botao-secundario" href="{{ url_for('dashboard') }}">Voltar ao resumo</a>
+</section>
+{% endblock %}

@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block titulo %}Perfil · {{ app_nome }}{% endblock %}
+
+{% block conteudo %}
+<h1 class="perfil-cabecalho-topo">Perfil de usuário</h1>
+
+{% if usuario_logado %}
+<section class="perfil-identidade" aria-label="Dados da conta">
+  <div class="avatar" aria-hidden="true">
+    <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-5 3.5-8 8-8s8 3 8 8"/></svg>
+  </div>
+  <div>
+    <h2 class="perfil-nome">Usuário</h2>
+  </div>
+</section>
+{% else %}
+<section class="perfil-login" aria-labelledby="titulo-google">
+  <h2 id="titulo-google" class="visually-hidden">Entrar ou criar conta</h2>
+  <a class="botao-google" href="{{ url_for('google_login') }}">
+    <svg viewBox="0 0 48 48" aria-hidden="true" focusable="false">
+      <path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9 3.6l6.7-6.7C35.6 2.6 30.2 0 24 0 14.6 0 6.5 5.4 2.6 13.2l7.8 6.1C12.3 13.2 17.7 9.5 24 9.5z"/>
+      <path fill="#4285F4" d="M46.5 24.5c0-1.6-.1-2.8-.4-4.1H24v7.8h12.7c-.3 2.1-1.6 5.2-4.6 7.3l7.6 5.9c4.4-4.1 6.8-10.1 6.8-16.9z"/>
+      <path fill="#FBBC05" d="M10.4 28.7c-.5-1.5-.8-3-.8-4.7s.3-3.2.8-4.7l-7.8-6.1C.9 16.4 0 20.1 0 24s.9 7.6 2.6 10.8l7.8-6.1z"/>
+      <path fill="#34A853" d="M24 48c6.5 0 11.9-2.1 15.7-5.6l-7.6-5.9c-2.1 1.4-4.9 2.4-8.1 2.4-6.3 0-11.7-3.7-13.6-9.2l-7.8 6.1C6.5 42.6 14.6 48 24 48z"/>
+    </svg>
+    <span>Entrar com o Google</span>
+  </a>
+</section>
+{% endif %}
+
+<nav class="atalhos" aria-label="Atalhos da conta">
+  <a href="{{ url_for('configuracoes') }}#seguranca">
+    <span class="atalho-icone" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 3 5 6v5c0 5 3 8 7 10 4-2 7-5 7-10V6l-7-3Z"/></svg></span>
+    Segurança <span class="atalho-seta" aria-hidden="true">›</span>
+  </a>
+  <a href="{{ url_for('configuracoes') }}#secao-notificacoes">
+    <span class="atalho-icone" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M18 9a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9m-8 12h4"/></svg></span>
+    Notificações <span class="atalho-seta" aria-hidden="true">›</span>
+  </a>
+  <a href="{{ url_for('configuracoes') }}#sobre">
+    <span class="atalho-icone" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.7.3-1 .9-1 1.7M12 17h.01"/></svg></span>
+    Ajuda <span class="atalho-seta" aria-hidden="true">›</span>
+  </a>
+</nav>
+
+{% if usuario_logado %}
+<form method="post" action="{{ url_for('logout') }}" class="formulario perfil-acoes">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+  <button class="botao botao-perigo" type="submit">Sair da conta</button>
+</form>
+{% endif %}
+{% endblock %}

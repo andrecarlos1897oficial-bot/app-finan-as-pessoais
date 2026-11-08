@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block titulo %}Integração Google · {{ app_nome }}{% endblock %}
+
+{% block conteudo %}
+<section class="secao">
+  <a class="voltar" href="{{ url_for('perfil') }}">← Voltar</a>
+  <p class="rotulo">Integração pendente</p>
+  <h1 class="titulo-pagina">Entrar com o <span class="destaque">Google</span></h1>
+</section>
+
+<section class="cartao">
+  <h2 class="cartao-titulo">O que falta para ativar</h2>
+  <p class="cartao-nota">
+    Este app <strong>não simula login</strong>. Para o acesso real com conta Google, é preciso criar
+    credenciais OAuth no Google Cloud Console e configurá-las no ambiente.
+  </p>
+
+  <ol class="passos">
+    <li>Crie um projeto e uma credencial OAuth 2.0 (tipo "Aplicativo da Web").</li>
+    <li>Cadastre a URL de redirecionamento <code>http://127.0.0.1:5001/perfil/google/callback</code>.</li>
+    <li>Defina as variáveis de ambiente <code>GOOGLE_CLIENT_ID</code> e <code>GOOGLE_CLIENT_SECRET</code>.</li>
+    <li>Passe a usar a biblioteca <code>authlib</code> ou <code>google-auth</code> para trocar o código pelo token.</li>
+  </ol>
+
+  <p class="aviso aviso-erro" role="status">
+    Situação atual: <strong>{{ 'credenciais presentes no ambiente' if google_configurado else 'sem credenciais configuradas' }}</strong>.
+    A rota de callback ainda não foi implementada nesta versão.
+  </p>
+
+  <a class="botao botao-secundario" href="{{ url_for('perfil') }}">Voltar ao perfil</a>
+</section>
+{% endblock %}

@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% block titulo %}Resumo Financeiro · {{ app_nome }}{% endblock %}
+
+{% block conteudo %}
+<section class="cartao" aria-labelledby="titulo-fluxo">
+  <div class="cartao-topo">
+    <div>
+      <h2 id="titulo-fluxo" class="cartao-titulo">Fluxo de caixa geral</h2>
+    </div>
+    <div class="alternador" role="group" aria-label="Período do resumo">
+      <a href="{{ url_for('dashboard', periodo='anual') }}"
+         {% if periodo == 'anual' %}class="ativo" aria-current="true"{% endif %}>Anual</a>
+      <a href="{{ url_for('dashboard', periodo='mensal') }}"
+         {% if periodo == 'mensal' %}class="ativo" aria-current="true"{% endif %}>Mensal</a>
+    </div>
+  </div>
+
+  {% if tem_dados %}
+    <div class="rosca-area">
+      <svg class="rosca" viewBox="0 0 200 200" role="img"
+           aria-label="Gráfico de rosca com a distribuição financeira do período">
+        <circle cx="100" cy="100" r="64" class="rosca-fundo"></circle>
+        {% for segmento in segmentos %}
+          <circle cx="100" cy="100" r="64"
+                  class="rosca-fatia"
+                  stroke="{{ segmento.cor }}"
+                  stroke-dasharray="{{ segmento.comprimento }} {{ 402.12 - segmento.comprimento }}"
+                  stroke-dashoffset="{{ segmento.offset }}"
+                  transform="rotate(-90 100 100)">
+            <title>{{ segmento.nome }}: {{ segmento.percentual_texto }}% ({{ segmento.valor_texto }})</title>
+          </circle>
+        {% endfor %}
+      </svg>
+
+      <ul class="legenda">
+        {% for segmento in segmentos %}
+          <li>
+            <span class="ponto" style="background: {{ segmento.cor }}" aria-hidden="true"></span>
+            <span class="legenda-nome">{{ segmento.nome }}</span>
+            <span class="legenda-pct">{{ segmento.percentual_texto }}%</span>
+            <span class="legenda-valor">{{ segmento.valor_texto }}</span>
+          </li>
+        {% endfor %}
+      </ul>
+    </div>
+  {% else %}
+    <div class="vazio">
+      <p>Ainda não há lançamentos neste período.</p>
+      <a class="botao" href="{{ url_for('adicionar') }}">Adicionar primeiro lançamento</a>
+    </div>
+  {% endif %}
+</section>
+
+<section class="cartao" aria-labelledby="titulo-resumo-periodo">
+  <div class="cartao-topo">
+    <h2 id="titulo-resumo-periodo" class="cartao-titulo">
+      Resumo geral {% if periodo == 'anual' %}do ano{% else %}do mês{% endif %}
+    </h2>
+  </div>
+
+  <ul class="mini-barras">
+    {% for item in mini_barras %}
+      <li>
+        <div class="mini-topo">
+          <span>{{ item.rotulo }}:</span>
+          <strong>{{ item.valor_texto }}</strong>
+        </div>
+        <div class="mini-trilho" role="img"
+             aria-label="{{ item.rotulo }}: {{ item.valor_texto }}, barra de {{ item.barra }}% da maior categoria">
+          <span class="mini-preenchimento" style="height: {{ item.barra }}%; background: {{ item.cor }}"></span>
+        </div>
+      </li>
+    {% endfor %}
+  </ul>
+</section>
+{% endblock %}

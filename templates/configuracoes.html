@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+{% block titulo %}Configurações · {{ app_nome }}{% endblock %}
+
+{% block conteudo %}
+<h1 class="configuracoes-titulo">Configurações</h1>
+
+<form class="configuracoes-form" method="post" action="{{ url_for('configuracoes') }}">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+
+  <div class="configuracoes-item" data-configuracoes-row>
+    <span class="config-icone" aria-hidden="true">
+      <svg viewBox="0 0 24 24"><path d="M20 15.5A8 8 0 0 1 8.5 4 8.5 8.5 0 1 0 20 15.5Z"/><path d="m16 3 1 2 2 1-2 1-1 2-1-2-2-1 2-1z"/></svg>
+    </span>
+    <label class="configuracoes-item-titulo" for="tema">Aparência / Tema</label>
+    <select id="tema" name="tema" class="seletor-config">
+      <option value="escuro" {% if tema == 'escuro' %}selected{% endif %}>Escuro</option>
+      <option value="claro" {% if tema == 'claro' %}selected{% endif %}>Claro</option>
+    </select>
+  </div>
+
+  <div class="configuracoes-item" data-configuracoes-row>
+    <span class="config-icone" aria-hidden="true">
+      <svg viewBox="0 0 24 24"><path d="M12 3 5 6v5c0 5 3 8 7 10 4-2 7-5 7-10V6l-7-3Z"/><path d="M9 10h6m-5-2v6m4-6v6"/></svg>
+    </span>
+    <label class="configuracoes-item-titulo" for="moeda">Moeda (BRL R$)</label>
+    <select id="moeda" name="moeda" class="seletor-config" aria-describedby="ajuda-moeda">
+      <option value="BRL" {% if moeda == 'BRL' %}selected{% endif %}>BRL</option>
+    </select>
+  </div>
+
+  <div class="configuracoes-item" data-configuracoes-row>
+    <span class="config-icone" aria-hidden="true">
+      <svg viewBox="0 0 24 24"><path d="M12 16V4m0 0L8 8m4-4 4 4M5 13v7h14v-7"/></svg>
+    </span>
+    <div class="configuracoes-exportacao-texto">
+      <span class="configuracoes-item-titulo">Exportar dados (PDF/CSV)</span>
+      <span class="configuracoes-item-nota">CSV abre no Excel. PDF ainda não disponível.</span>
+    </div>
+    <a class="configuracoes-chevron" href="{{ url_for('exportar_csv') }}" aria-label="Exportar dados em CSV">›</a>
+  </div>
+
+  <div class="configuracoes-item" data-configuracoes-row id="secao-notificacoes">
+    <span class="config-icone" aria-hidden="true">
+      <svg viewBox="0 0 24 24"><path d="M18 9a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9m-8 12h4"/></svg>
+    </span>
+    <label class="configuracoes-item-titulo" for="notificacoes">Notificações</label>
+    <select id="notificacoes" name="notificacoes" class="seletor-config" aria-describedby="ajuda-notificacoes">
+      <option value="sim" {% if notificacoes == 'sim' %}selected{% endif %}>Ativadas</option>
+      <option value="nao" {% if notificacoes == 'nao' %}selected{% endif %}>Desativadas</option>
+    </select>
+  </div>
+  <p class="ajuda" id="ajuda-notificacoes">A preferência fica salva; o envio de avisos ainda não está implementado.</p>
+
+  <details class="configuracoes-detalhe configuracoes-item" id="seguranca" data-configuracoes-row>
+    <summary class="configuracoes-linha">
+      <span class="config-icone" aria-hidden="true">
+        <svg viewBox="0 0 24 24"><path d="M12 3 5 6v5c0 5 3 8 7 10 4-2 7-5 7-10V6l-7-3Z"/></svg>
+      </span>
+      <span class="configuracoes-item-titulo">Segurança</span>
+      <span class="configuracoes-chevron" aria-hidden="true">›</span>
+    </summary>
+    <ul class="lista-simples configuracoes-detalhe-conteudo">
+      <li>Cookies de sessão com <code>HttpOnly</code> e <code>SameSite=Lax</code>.</li>
+      <li>Proteção CSRF em todos os formulários.</li>
+      <li>Cabeçalhos CSP, <code>X-Frame-Options: DENY</code> e <code>nosniff</code> ativos.</li>
+      <li>Valores recalculados no servidor com <code>Decimal</code>.</li>
+    </ul>
+  </details>
+
+  <details class="configuracoes-detalhe configuracoes-item" id="sobre" data-configuracoes-row>
+    <summary class="configuracoes-linha">
+      <span class="config-icone" aria-hidden="true">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v6m0-10h.01"/></svg>
+      </span>
+      <span class="configuracoes-item-titulo">Sobre o app</span>
+      <span class="configuracoes-chevron" aria-hidden="true">›</span>
+    </summary>
+    <p class="configuracoes-detalhe-conteudo">
+      {{ app_nome }} · Flask + SQLite + HTML5/CSS3/JS puro. Versão 1.0, uso local em 127.0.0.1.
+    </p>
+  </details>
+
+  <button class="botao configuracoes-salvar" type="submit">Salvar configurações</button>
+</form>
+{% endblock %}

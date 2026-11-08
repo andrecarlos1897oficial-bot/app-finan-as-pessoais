@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block titulo %}Novo investimento · {{ app_nome }}{% endblock %}
+{% from "_reference_components.html" import form_header, category_icon, category_search %}
+
+{% block conteudo %}
+<form class="cartao formulario formulario-operacao" method="post" action="{{ url_for('novo_investimento') }}">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+  {{ form_header('ADICIONAR INVESTIMENTO', url_for('adicionar')) }}
+
+  <div class="campo-valor">
+    <label for="valor">VALOR DO APORTE (R$) <span class="exemplo">- Ex: 1000,00</span></label>
+    <div class="valor-linha">
+      <span class="valor-prefixo" aria-hidden="true">R$</span>
+      <input id="valor" name="valor" type="text" inputmode="decimal" autocomplete="off"
+             placeholder="0,00" maxlength="20" required aria-describedby="ajuda-valor"
+             value="{{ request.form.get('valor', '') }}">
+    </div>
+    <p class="ajuda" id="ajuda-valor">O aporte entra nas reservas do resumo.</p>
+  </div>
+
+  <div class="campo">
+    <label for="ativo">Ativo (opcional)</label>
+    <input id="ativo" name="ativo" type="text" list="ativos-sugeridos" maxlength="80"
+           placeholder="Ex.: PETR4, Tesouro Selic 2029" value="{{ request.form.get('ativo', '') }}">
+    <datalist id="ativos-sugeridos">
+      <option value="PETR4"></option>
+      <option value="VALE3"></option>
+      <option value="ITSA4"></option>
+      <option value="HGLG11"></option>
+      <option value="MXRF11"></option>
+      <option value="Tesouro Selic 2029"></option>
+      <option value="Tesouro IPCA+ 2035"></option>
+      <option value="CDB 110% do CDI"></option>
+      <option value="ETF IVVB11"></option>
+    </datalist>
+    <p class="ajuda">Digite ou escolha uma sugestão. O campo é livre.</p>
+  </div>
+
+  <fieldset class="grupo">
+    <legend class="visually-hidden">Categoria do investimento</legend>
+    {{ category_search('SELECIONAR ATIVO (Ações, ETFs, CDB...)') }}
+    <div class="grade-categorias">
+      {% for categoria in categorias %}
+        <label class="opcao">
+          <input type="radio" name="categoria" value="{{ categoria }}" required
+                 {% if request.form.get('categoria') == categoria %}checked{% endif %}>
+          {{ category_icon(categoria) }}
+          <span>{{ categoria }}</span>
+        </label>
+      {% endfor %}
+    </div>
+  </fieldset>
+
+  <button class="botao formulario-cta preenchido" type="submit">Confirmar Investimento</button>
+</form>
+{% endblock %}

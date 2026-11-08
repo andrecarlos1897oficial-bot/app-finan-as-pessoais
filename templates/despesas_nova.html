@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block titulo %}Nova despesa · {{ app_nome }}{% endblock %}
+{% from "_reference_components.html" import form_header, category_icon, category_search %}
+
+{% block conteudo %}
+<form class="cartao formulario formulario-operacao" method="post" action="{{ url_for('nova_despesa') }}">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+  {{ form_header('ADICIONAR DESPESA', url_for('adicionar')) }}
+
+  <div class="campo-valor">
+    <label for="valor">VALOR DA DESPESA (R$) <span class="exemplo">- Ex: 350,00</span></label>
+    <div class="valor-linha">
+      <span class="valor-prefixo" aria-hidden="true">R$</span>
+      <input id="valor" name="valor" type="text" inputmode="decimal" autocomplete="off"
+             placeholder="0,00" maxlength="20" required aria-describedby="ajuda-valor"
+             value="{{ request.form.get('valor', '') }}">
+    </div>
+    <p class="ajuda" id="ajuda-valor">Use vírgula para centavos, por exemplo 89,90.</p>
+  </div>
+
+  <fieldset class="grupo">
+    <legend class="visually-hidden">Categoria</legend>
+    {{ category_search('SELECIONAR CATEGORIA (Restaurante, Mercado, Transporte...)') }}
+    <div class="grade-categorias">
+      {% for categoria in categorias %}
+        <label class="opcao">
+          <input type="radio" name="categoria" value="{{ categoria }}" required
+                 {% if request.form.get('categoria') == categoria %}checked{% endif %}>
+          {{ category_icon(categoria) }}
+          <span>{{ categoria }}</span>
+        </label>
+      {% endfor %}
+    </div>
+  </fieldset>
+
+  <button class="botao formulario-cta" type="submit">Salvar Despesa</button>
+</form>
+{% endblock %}

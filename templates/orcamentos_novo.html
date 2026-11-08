@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block titulo %}Novo orçamento · {{ app_nome }}{% endblock %}
+{% from "_reference_components.html" import form_header, category_icon, category_search %}
+
+{% block conteudo %}
+<form class="cartao formulario formulario-operacao" method="post" action="{{ url_for('novo_orcamento') }}">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+  {{ form_header('ADICIONAR ORÇAMENTO', url_for('adicionar')) }}
+
+  <div class="campo">
+    <label for="nome">NOME DO ORÇAMENTO <span class="exemplo">- Ex: Mercado</span></label>
+    <input id="nome" name="nome" type="text" maxlength="60" required
+           placeholder="" value="{{ request.form.get('nome', '') }}">
+  </div>
+
+  <div class="campo-valor">
+    <label for="valor">VALOR DO ORÇAMENTO (R$) <span class="exemplo">- Ex: 1.500,00</span></label>
+    <div class="valor-linha">
+      <span class="valor-prefixo" aria-hidden="true">R$</span>
+      <input id="valor" name="valor" type="text" inputmode="decimal" autocomplete="off"
+             placeholder="0,00" maxlength="20" required aria-describedby="ajuda-valor"
+             value="{{ request.form.get('valor', '') }}">
+    </div>
+    <p class="ajuda" id="ajuda-valor">Limite de gastos para a categoria.</p>
+  </div>
+
+  <fieldset class="grupo">
+    <legend class="visually-hidden">Categoria</legend>
+    {{ category_search('SELECIONAR CATEGORIA (Mercado, Restaurante, Contas...)') }}
+    <div class="grade-categorias">
+      {% for categoria in categorias %}
+        <label class="opcao">
+          <input type="radio" name="categoria" value="{{ categoria }}" required
+                 {% if request.form.get('categoria') == categoria %}checked{% endif %}>
+          {{ category_icon(categoria) }}
+          <span>{{ categoria }}</span>
+        </label>
+      {% endfor %}
+    </div>
+  </fieldset>
+
+  <button class="botao formulario-cta preenchido" type="submit">Confirmar Orçamento</button>
+</form>
+{% endblock %}

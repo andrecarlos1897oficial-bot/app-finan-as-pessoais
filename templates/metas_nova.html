@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block titulo %}Nova meta · {{ app_nome }}{% endblock %}
+{% from "_reference_components.html" import form_header, category_icon, category_search %}
+
+{% block conteudo %}
+<form class="cartao formulario formulario-operacao" method="post" action="{{ url_for('nova_meta') }}">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+  {{ form_header('ADICIONAR META', url_for('adicionar')) }}
+
+  <div class="campo">
+    <label for="nome">NOME DA META <span class="exemplo">- Ex: Comprar Carro</span></label>
+    <input id="nome" name="nome" type="text" maxlength="60" required
+           placeholder="" value="{{ request.form.get('nome', '') }}">
+  </div>
+
+  <div class="campo-valor">
+    <label for="valor_total">VALOR TOTAL DA META (R$) <span class="exemplo">- Ex: 50.000,00</span></label>
+    <div class="valor-linha">
+      <span class="valor-prefixo" aria-hidden="true">R$</span>
+      <input id="valor_total" name="valor_total" type="text" inputmode="decimal" autocomplete="off"
+             placeholder="0,00" maxlength="20" required aria-describedby="ajuda-valor"
+             value="{{ request.form.get('valor_total', '') }}">
+    </div>
+    <p class="ajuda" id="ajuda-valor">Valor total que você quer alcançar.</p>
+  </div>
+
+  <fieldset class="grupo">
+    <legend class="visually-hidden">Tipo da meta</legend>
+    {{ category_search('SELECIONAR TIPO DE META (Casa, Viagem, Carro...)') }}
+    <div class="grade-categorias">
+      {% for tipo in tipos %}
+        <label class="opcao">
+          <input type="radio" name="tipo" value="{{ tipo }}" required
+                 {% if request.form.get('tipo') == tipo %}checked{% endif %}>
+          {{ category_icon(tipo) }}
+          <span>{{ tipo }}</span>
+        </label>
+      {% endfor %}
+    </div>
+  </fieldset>
+
+  <button class="botao formulario-cta preenchido" type="submit">Confirmar Meta</button>
+</form>
+{% endblock %}

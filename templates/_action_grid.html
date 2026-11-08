@@ -1,0 +1,42 @@
+<ul class="grade-acoes">
+  <li>
+    <a class="acao" href="{{ url_for('nova_receita') }}">
+      <span class="acao-icone acao-entrada" aria-hidden="true">
+        <svg viewBox="0 0 48 48"><circle cx="24" cy="24" r="18"/><path d="m16 24 6 6 11-12"/></svg>
+      </span>
+      <span class="acao-nome">Receita</span>
+    </a>
+  </li>
+  <li>
+    <a class="acao" href="{{ url_for('nova_despesa') }}">
+      <span class="acao-icone acao-saida" aria-hidden="true">
+        <svg viewBox="0 0 48 48"><path d="M6 8h6l5 22h18l4-14H14"/><circle cx="19" cy="38" r="2.5"/><circle cx="34" cy="38" r="2.5"/></svg>
+      </span>
+      <span class="acao-nome">Despesas</span>
+    </a>
+  </li>
+  <li>
+    <a class="acao" href="{{ url_for('novo_investimento') }}">
+      <span class="acao-icone acao-invest" aria-hidden="true">
+        <svg viewBox="0 0 48 48"><path d="M8 38 20 26l8 8 12-14"/><path d="M30 20h10v10"/></svg>
+      </span>
+      <span class="acao-nome">Investimentos</span>
+    </a>
+  </li>
+  <li>
+    <a class="acao" href="{{ url_for('nova_meta') }}">
+      <span class="acao-icone acao-meta" aria-hidden="true">
+        <svg viewBox="0 0 48 48"><circle cx="24" cy="24" r="16"/><circle cx="24" cy="24" r="9"/><circle cx="24" cy="24" r="2.5"/><path d="m34 6 2 6 6 2-6 2-2 6-2-6-6-2 6-2z"/></svg>
+      </span>
+      <span class="acao-nome">Metas</span>
+    </a>
+  </li>
+  <li>
+    <a class="acao" href="{{ url_for('novo_orcamento') }}">
+      <span class="acao-icone acao-orcamento" aria-hidden="true">
+        <svg viewBox="0 0 48 48"><rect x="12" y="6" width="24" height="36" rx="3"/><path d="M18 16h12M18 24h4M26 24h4M18 32h4M26 32h4"/></svg>
+      </span>
+      <span class="acao-nome">Orçamento</span>
+    </a>
+  </li>
+</ul>
