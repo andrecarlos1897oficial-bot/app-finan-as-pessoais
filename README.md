@@ -26,7 +26,7 @@ pip install flask
 python app.py
 ```
 
-Abra <http://127.0.0.1:5001>.
+Abra <https://app-finan-as-pessoais.onrender.com>
 
 Variáveis de ambiente opcionais:
 
