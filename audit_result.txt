@@ -1,0 +1,19 @@
+Status: done
+Result: Auditoría de seguridad completada — 0 vulnerabilidades encontradas. Todas as 29 pruebas unitárias passaram (OK, 2.542s).
+Evidence: Leitura de app.py, db.py, templates/*.html, static/*.{css,js} e execução da suíte completa `python -m unittest discover -v`.
+
+Key findings:
+- SECRET_KEY: Vem de variável de ambiente FINANCAS_SECRET_KEY; fallback para instance/secret_key.txt (arquivo existente com 64 bytes gerados por secrets.token_hex(32)). Sem segredos hardcoded.
+- Debug: Desligado por padrão; bind 127.0.0.1 apenas. Debug só ativa com FINANCAS_DEBUG=1.
+- CSRF: compare_digest em todos os POST via before_request. Testes confirmam CSRF ausente/errado bloqueia (400).
+- Validação/sanitização: parse_valor (formato brasileiro rigoroso com regex), limpar_texto (remove controle, limite 60 chars), escolher_categoria (whitelist rigorosa). E-mail validado com regex.
+- Preços/integridade: Cálculos 100% no servidor com Decimal. Cliente envia apenas ID/categorias; quantidades limitadas a 1-30 por item.
+- XSS: Jinja2 autoescape ativo padrão; nenhum template usa |safe. Testes confirmam nome de meta perigoso (<img src=x onerror=...) é escapado para <img src=x.
+- SQL injection: Todas as queries usam parâmetros parametrizados (?) no db.py. Nenhuma concatenação de strings SQL.
+- CSP: script-src 'self' (sem unsafe-inline); style-src 'self' 'unsafe-inline' (intencional para cores/larguras inline do SVG). X-Frame-Options: DENY, X-Content-Type-Options: nosniff, Referrer-Policy: no-referrer, Permissions-Policy: geolocation=(), microphone=(), camera=(), payment=().
+- Cookies: Session cookie com HttpOnly e SameSite=Lax verificado no resposta HTTP.
+- CSV export: Gerado em memória (io.StringIO), sem arquivo temporário. Nome do arquivo usa datetime formatado com segurança. Sem path traversal.
+- PDF export: Retorna 501 com mensagem "ainda não implementada", sem vazar dados.
+- Google OAuth: Não simulado. Rota /perfil/google orienta ao usuário a configurar credenciais no Google Cloud Console. GOOGLE_CLIENT_ID lido apenas de variável de ambiente.
+
+What I could not check: Comportamento em produção com variáveis de ambiente reais (testes usam configuração em memória). Header Secure flag no cookie (seria True atrás de HTTPS, configurado como False para HTTP local).
