@@ -1,0 +1,13 @@
+[build]
+  publish = "static"
+
+[build.environment]
+  NODE_VERSION = "24"
+
+[[redirects]]
+  from = "/static/*"
+  to = "/:splat"
+  status = 200
+
+[server]
+  includedFiles = ["templates/**", "static/**"]
