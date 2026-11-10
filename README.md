@@ -4,6 +4,35 @@ Aplicação local de controle financeiro: Flask + SQLite no back-end, HTML5/CSS3
 no front-end (sem framework, sem build step). Interface mobile-first, tema escuro
 grafite com acentos azul-petróleo.
 
+## Publicação na Netlify
+
+O endereço de produção é <https://app-controle-financas-pessoal.netlify.app>.
+
+A publicação usa o servidor Node.js em `netlify/server/index.mjs`, com Node 24,
+e os mesmos templates, CSS e JavaScript da interface original. O `netlify.toml`
+publica apenas os arquivos de `static/`, preserva os endereços `/static/*` e inclui
+os templates no pacote do servidor. A página inicial é renderizada pelo servidor;
+não há comando de build obrigatório.
+
+Os lançamentos e as configurações são armazenados no Netlify Database. A migração
+em `netlify/database/migrations/` é aplicada automaticamente durante a publicação.
+Não se usa SQLite nem arquivos locais para os dados da versão hospedada.
+
+Cada navegador recebe um cookie privado que identifica seus registros. Os dados
+sobrevivem a reinicializações e publicações, mas limpar esse cookie perde o acesso
+aos registros daquele navegador. Não existe sincronização entre dispositivos nem
+login Google implementado. Exporte o CSV para manter uma cópia dos lançamentos.
+
+Para desenvolvimento, instale as dependências com `npm install` e execute
+`netlify dev --port 8889` usando Node 24. O provisionamento do banco e as migrações
+são gerenciados pela Netlify.
+
+Execute `npm test` para verificar renderização das páginas, criação dos cinco tipos
+de lançamento, validação monetária, CSRF, configurações, isolamento entre navegadores
+e exportação CSV. Os testes usam um banco simulado e não alteram dados publicados.
+
+O código Flask descrito abaixo permanece disponível para execução local.
+
 ## Plano de implementação (o que foi feito e por quê)
 
 1. **Persistência real**: SQLite criado na inicialização, com camada de acesso isolada
@@ -26,7 +55,7 @@ pip install flask
 python app.py
 ```
 
-Abra <https://app-finan-as-pessoais.onrender.com>
+Abra <http://127.0.0.1:5001> para a versão Flask local.
 
 Variáveis de ambiente opcionais:
 

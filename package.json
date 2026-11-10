@@ -1,0 +1,14 @@
+{
+  "name": "minhas-financas",
+  "private": true,
+  "type": "module",
+  "engines": { "node": ">=24" },
+  "scripts": { "test": "node --test tests/netlify.test.mjs" },
+  "dependencies": {
+    "@netlify/database": "^1.0.0",
+    "cookie-parser": "^1.4.7",
+    "decimal.js": "^10.6.0",
+    "express": "^5.1.0",
+    "nunjucks": "^3.2.4"
+  }
+}
