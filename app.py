@@ -61,8 +61,6 @@ CATEGORIAS_ORCAMENTO = [
 
 # Cores do gráfico de rosca (paleta definida no DESIGN_SPEC.md).
 CORES_ROSCA = {
-    "Salário": "#0E8388",
-    "Freelance": "#3498DB",
     "Receitas": "#2ECC71",
     "Despesas": "#E74C3C",
     "Metas": "#9B59B6",
@@ -180,22 +178,9 @@ def por_categoria(linhas, campo="valor"):
 
 
 def montar_rosca(receitas, despesas, investimentos, metas):
-    """Monta os seis segmentos do gráfico de rosca, sem contar valor duas vezes.
-
-    Salário e Freelance vêm das receitas dessas categorias; 'Receitas' é o
-    restante das entradas; 'Reservas' soma os aportes; 'Metas' soma os
-    objetivos e 'Despesas' soma as saídas do período.
-    """
-    entradas = por_categoria(receitas)
-    salario = entradas.get("Salário", Decimal("0"))
-    freelance = entradas.get("Freelance", Decimal("0"))
-    total_receitas = somar(receitas)
-    outras_receitas = total_receitas - salario - freelance
-
+    """Monta os quatro segmentos do gráfico de rosca."""
     medidas = [
-        ("Salário", salario),
-        ("Freelance", freelance),
-        ("Receitas", outras_receitas),
+        ("Receitas", somar(receitas)),
         ("Despesas", somar(despesas)),
         ("Metas", somar(metas, "valor_total")),
         ("Reservas", somar(investimentos)),
@@ -225,10 +210,9 @@ def montar_rosca(receitas, despesas, investimentos, metas):
 
 
 def montar_mini_barras(receitas, despesas):
-    salario = por_categoria(receitas).get("Salário", Decimal("0"))
-    dividendos = por_categoria(receitas).get("Dividendos", Decimal("0"))
+    total_receitas = somar(receitas)
     total_despesas = somar(despesas)
-    maior = max(salario, dividendos, total_despesas, Decimal("1"))
+    maior = max(total_receitas, total_despesas, Decimal("1"))
 
     def largura(valor):
         if valor <= 0:
@@ -236,12 +220,10 @@ def montar_mini_barras(receitas, despesas):
         return round(float(valor / maior * 100), 1)
 
     return [
-        {"rotulo": "Salário", "valor": salario, "valor_texto": formatar_brl(salario),
-         "barra": largura(salario), "cor": CORES_ROSCA["Salário"]},
+        {"rotulo": "Receitas", "valor": total_receitas, "valor_texto": formatar_brl(total_receitas),
+         "barra": largura(total_receitas), "cor": CORES_ROSCA["Receitas"]},
         {"rotulo": "Despesas", "valor": total_despesas, "valor_texto": formatar_brl(total_despesas),
          "barra": largura(total_despesas), "cor": CORES_ROSCA["Despesas"]},
-        {"rotulo": "Dividendos", "valor": dividendos, "valor_texto": formatar_brl(dividendos),
-         "barra": largura(dividendos), "cor": CORES_ROSCA["Freelance"]},
     ]
 
 
@@ -378,6 +360,52 @@ def create_app(config_teste=None):
             mini_barras=montar_mini_barras(receitas, despesas),
             ultimos_receitas=receitas[:3],
             ultimos_despesas=despesas[:3],
+        )
+
+    @app.route("/extratos/<tipo>")
+    def extratos(tipo):
+        """Exibe extratos detalhados por tipo."""
+        if tipo not in ("receitas", "despesas", "metas", "reservas"):
+            abort(404)
+
+        periodo = request.args.get("periodo", "mensal")
+        if periodo not in ("mensal", "anual"):
+            periodo = "mensal"
+
+        agora = datetime.now()
+        prefixo = agora.strftime("%Y-%m") if periodo == "mensal" else agora.strftime("%Y")
+
+        if tipo == "receitas":
+            itens = banco.listar("receitas", prefixo)
+            total = somar(itens)
+            titulo = "Extrato de Receitas"
+            template = "extrato_receitas.html"
+        elif tipo == "despesas":
+            itens = banco.listar("despesas", prefixo)
+            total = somar(itens)
+            titulo = "Extrato de Despesas"
+            template = "extrato_despesas.html"
+        elif tipo == "metas":
+            itens = banco.listar("metas", prefixo)
+            total = somar(itens, "valor_total")
+            titulo = "Extrato de Metas"
+            template = "extrato_metas.html"
+        else:  # reservas
+            itens = banco.listar("investimentos", prefixo)
+            total = somar(itens)
+            titulo = "Extrato de Reservas"
+            template = "extrato_reservas.html"
+
+        return render_template(
+            template,
+            tela="extrato",
+            tipo=tipo,
+            periodo=periodo,
+            titulo=titulo,
+            itens=itens,
+            total=total,
+            total_texto=formatar_brl(total),
+            agora=agora,
         )
 
     @app.route("/adicionar")

@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+{% block titulo %}{{ titulo }} · {{ app_nome }}{% endblock %}
+
+{% block conteudo %}
+<section class="cartao" aria-labelledby="titulo-extrato">
+  <div class="cartao-topo">
+    <div>
+      <h2 id="titulo-extrato" class="cartao-titulo">{{ titulo }}</h2>
+      <p class="cartao-subtitulo">
+        {% if periodo == 'anual' %}Período: Ano {{ agora.year }}{% else %}Período: {{ agora.strftime('%m/%Y') }}{% endif %}
+      </p>
+    </div>
+    <div class="alternador" role="group" aria-label="Período do extrato">
+      <a href="{{ url_for('extratos', tipo=tipo, periodo='anual') }}"
+         {% if periodo == 'anual' %}class="ativo" aria-current="true"{% endif %}>Anual</a>
+      <a href="{{ url_for('extratos', tipo=tipo, periodo='mensal') }}"
+         {% if periodo == 'mensal' %}class="ativo" aria-current="true"{% endif %}>Mensal</a>
+    </div>
+  </div>
+
+  {% if itens %}
+    <div class="extrato-resumo">
+      <div class="extrato-total">
+        <span>Total:</span>
+        <strong>{{ total_texto }}</strong>
+      </div>
+      <div class="extrato-count">
+        <span>{{ itens|length }} lançamento{{ 's' if itens|length != 1 }}</span>
+      </div>
+    </div>
+
+    <ul class="lista-extrato">
+      {% for item in itens %}
+        <li class="item-extrato">
+          <div class="item-extrato-info">
+            {% if tipo == 'metas' %}
+              <span class="item-extrato-categoria">Meta</span>
+              <span class="item-extrato-nome">{{ item.nome }}</span>
+              <span class="item-extrato-tipo">{{ item.tipo }}</span>
+            {% elif tipo == 'reservas' %}
+              <span class="item-extrato-categoria">{{ item.categoria }}</span>
+              {% if item.ativo %}
+                <span class="item-extrato-ativo">{{ item.ativo }}</span>
+              {% endif %}
+            {% else %}
+              <span class="item-extrato-categoria">{{ item.categoria }}</span>
+            {% endif %}
+            <span class="item-extrato-data">{{ item.criado_em[:10] if item.criado_em else '—' }}</span>
+          </div>
+          <div class="item-extrato-valor">
+            {{ formatar_brl(item.valor if tipo != 'metas' else item.valor_total) }}
+          </div>
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <div class="vazio">
+      <p>Nenhum lançamento encontrado neste período.</p>
+      <a class="botao" href="{{ url_for('dashboard') }}">Voltar ao dashboard</a>
+    </div>
+  {% endif %}
+
+  <div class="extrato-acoes">
+    <a class="botao-secundario" href="{{ url_for('dashboard') }}">
+      ← Voltar ao dashboard
+    </a>
+  </div>
+</section>
+{% endblock %}

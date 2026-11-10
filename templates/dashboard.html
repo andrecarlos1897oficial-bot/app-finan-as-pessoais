@@ -21,24 +21,28 @@
            aria-label="Gráfico de rosca com a distribuição financeira do período">
         <circle cx="100" cy="100" r="64" class="rosca-fundo"></circle>
         {% for segmento in segmentos %}
-          <circle cx="100" cy="100" r="64"
-                  class="rosca-fatia"
-                  stroke="{{ segmento.cor }}"
-                  stroke-dasharray="{{ segmento.comprimento }} {{ 402.12 - segmento.comprimento }}"
-                  stroke-dashoffset="{{ segmento.offset }}"
-                  transform="rotate(-90 100 100)">
-            <title>{{ segmento.nome }}: {{ segmento.percentual_texto }}% ({{ segmento.valor_texto }})</title>
-          </circle>
+          <a href="{{ url_for('extratos', tipo=segmento.nome|lower, periodo=periodo) }}" class="rosca-link">
+            <circle cx="100" cy="100" r="64"
+                    class="rosca-fatia"
+                    stroke="{{ segmento.cor }}"
+                    stroke-dasharray="{{ segmento.comprimento }} {{ 402.12 - segmento.comprimento }}"
+                    stroke-dashoffset="{{ segmento.offset }}"
+                    transform="rotate(-90 100 100)">
+              <title>{{ segmento.nome }}: {{ segmento.percentual_texto }}% ({{ segmento.valor_texto }}) - Clique para ver extratos</title>
+            </circle>
+          </a>
         {% endfor %}
       </svg>
 
       <ul class="legenda">
         {% for segmento in segmentos %}
           <li>
-            <span class="ponto" style="background: {{ segmento.cor }}" aria-hidden="true"></span>
-            <span class="legenda-nome">{{ segmento.nome }}</span>
-            <span class="legenda-pct">{{ segmento.percentual_texto }}%</span>
-            <span class="legenda-valor">{{ segmento.valor_texto }}</span>
+            <a href="{{ url_for('extratos', tipo=segmento.nome|lower, periodo=periodo) }}" class="legenda-link">
+              <span class="ponto" style="background: {{ segmento.cor }}" aria-hidden="true"></span>
+              <span class="legenda-nome">{{ segmento.nome }}</span>
+              <span class="legenda-pct">{{ segmento.percentual_texto }}%</span>
+              <span class="legenda-valor">{{ segmento.valor_texto }}</span>
+            </a>
           </li>
         {% endfor %}
       </ul>
