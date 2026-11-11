@@ -674,6 +674,10 @@ def create_app(config_teste=None):
     return app
 
 
+# Objeto de aplicação de nível superior para servidores WSGI (ex.: Vercel, Gunicorn)
+app = create_app()
+
+
 if __name__ == "__main__":
     aplicacao = create_app()
     # Debug só quando FINANCAS_DEBUG=1. Bind estrito em localhost.
